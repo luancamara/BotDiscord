@@ -56,7 +56,7 @@ Reaja com ✅ para confirmar e ❌ para cancelar"""
             await msg.add_reaction("✅")
             await msg.add_reaction("❌")
             try:
-                reaction, user = await self.client.wait_for('reaction_add', check=lambda reaction, user: user != self.client.user, timeout=10)
+                reaction, user = await self.client.wait_for('reaction_add', check=lambda reaction, user: user == ctx.author, timeout=10)
             except asyncio.TimeoutError:
                 await msg.delete()
                 await ctx.reply("Expirou o tempo de confirmação")
@@ -101,7 +101,7 @@ Reaja com ✅ para confirmar e ❌ para cancelar"""
             await msg.add_reaction("✅")
             await msg.add_reaction("❌")
             try:
-                reaction, user = await self.client.wait_for('reaction_add', check=lambda reaction, user: user != self.client.user, timeout=10)
+                reaction, user = await self.client.wait_for('reaction_add', check=lambda reaction, user: user == ctx.author, timeout=10)
             except asyncio.TimeoutError:
                 await msg.delete()
                 embedvc.description = "Expirou o tempo de confirmação"
