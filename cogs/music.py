@@ -113,11 +113,27 @@ class music(commands.Cog):
     @commands.command(name="help", alisases=['ajuda'], help="Comando de ajuda")
     async def help(self, ctx):
         helptxt = ''
+
+        # Comandos de música:
         for command in self.client.commands:
-            helptxt += f'**{command}** - {command.help}\n'
+            if command.module == "cogs.music":
+                helptxt += f'**{command}** - {command.help}\n'
         embedhelp = discord.Embed(
             colour=1646116,  # grey
-            title=f'Comandos do {self.client.user.name}',
+            title=f'Comandos de musica do {self.client.user.name}',
+            description=helptxt + '\nO Luan é foda, fala ai!'
+        )
+        embedhelp.set_thumbnail(url=self.client.user.avatar_url)
+        await ctx.send(embed=embedhelp)
+
+        helptxt = ''
+        # Comandos de blacklist:
+        for command in self.client.commands:
+            if command.module == "cogs.blacklist":
+                helptxt += f'**{command}** - {command.help}\n'
+        embedhelp = discord.Embed(
+            colour=1646116,  # grey
+            title=f'Comandos de blacklist do {self.client.user.name}',
             description=helptxt + '\nO Luan é foda, fala ai!'
         )
         embedhelp.set_thumbnail(url=self.client.user.avatar_url)
@@ -232,68 +248,6 @@ class music(commands.Cog):
 
         embedvc.colour = 1646116
         embedvc.description = "Você parou o player"
-        await ctx.reply(embed=embedvc)
-
-    @commands.command(name="blacklist", help="Blacklista um jogador", aliases=["bl"])
-    async def blacklist(self, ctx: commands.Context, *, query: str = ""):
-        data = f"{datetime.date.today().day}/{datetime.date.today().month}/{datetime.date.today().year}"
-        embedvc = discord.Embed(colour=12255232)
-        blacklist = get_blacklist()
-
-        if not blacklist.keys():
-            id = str(0)
-        else:
-            id = str(len(blacklist.keys()))
-
-        player = query.split("-")
-
-        if len(player) != 2:
-            embedvc.description = "Está faltando informação, favor verificar"
-        else:
-            if verifica_bl(player[0].strip()):
-                embedvc.description = "Jogador já está blacklistado"
-            else:
-                d = {id: {"jogador": player[0].strip(), "motivo": player[1].strip(), "data": data}}
-                blacklist.update(d)
-                salvar(blacklist)
-                embedvc.description = f"""
-                Você blacklistou o jogador **{d[id]['jogador']}**
-                
-                **Motivo**: {d[id]['motivo']}
-                **Data**: {d[id]['data']}"""
-
-        embedvc.colour = 1646116
-        await ctx.reply(embed=embedvc)
-
-    @commands.command(name="check_blacklist", help="Checka a Blacklist de um jogador",
-                      aliases=["cbl", "checkbl", "checkblacklist", "check"])
-    async def check_blacklist(self, ctx: commands.Context, *, query: str = ""):
-
-        embedvc = discord.Embed(colour=12255232)
-        jogador = query
-
-        embedvc.colour = 1646116
-        if jogador.strip() == "":
-            embedvc.description = "Nenhum jogador foi informado"
-        else:
-            if verifica_bl(jogador):
-                embedvc.description = f"O nick **{jogador}** está na blacklist"
-            else:
-                embedvc.description = f"O nick **{jogador}** está limpo"
-
-        await ctx.reply(embed=embedvc)
-
-    @commands.command(name="unblacklist", help="Remove um jogador da blacklist", aliases=["unbl"])
-    async def unblacklist(self, ctx: commands.Context, *, query: str = ""):
-        embedvc = discord.Embed(colour=12255232)
-        blacklist = get_blacklist()
-        if verifica_bl(query.strip()):
-            blacklist.pop(id_bl(query))
-            corrige_ids(blacklist)
-            embedvc.description = "Jogador removido da blacklist"
-        else:
-            embedvc.description = "Jogador não está na blacklist"
-        embedvc.colour = 1646116
         await ctx.reply(embed=embedvc)
 
 
